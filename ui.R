@@ -115,15 +115,75 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                       ),
                       tabPanel("Model Settings", 
                         tabsetPanel(
-                          tabPanel(title = "Multiple Linear Regression"),
-                          tabPanel(title = "Regression Tree"),
-                          tabPanel(title = "Random Forest")
-                          
-                        )
+                          tabPanel(title = "Multiple Linear Regression",
+                             sidebarLayout(
+                               sidebarPanel(
+                                 checkboxGroupInput(inputId = "vars_mod1",
+                                     label = "Select the Predictor Variables",
+                                     choices = names(Filter(is.numeric,df[,-1]))
+                                  ),
+                                 checkboxInput(inputId = "prepros1",
+                                               label = "Standardize Data?",
+                                               value = TRUE)
+                               ),
+                               mainPanel(
+                                 tabPanel(title = "Training Error Plot",
+                                    plotOutput("train_mod1")
+                                 ),
+                                 tabPanel(title = "Training Error Summary",
+                                    verbatimTextOutput("summary_mod1")
+                                 )
+                               )
+                             )
+                             
+                          ),
+                          tabPanel(title = "Regression Tree",
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       checkboxGroupInput(inputId = "vars_mod2",
+                                            label = "Select the Predictor Variables",
+                                            choices = names(Filter(is.numeric,df[,-1]))
+                                       ),
+                                       checkboxInput(inputId = "prepros2",
+                                                     label = "Standardize Data?",
+                                                     value = TRUE),
+                                     ),
+                                     mainPanel(
+                                       tabPanel(title = "Training Error Plot",
+                                                plotOutput("train_mod2")
+                                       ),
+                                       tabPanel(title = "Training Error Summary",
+                                                verbatimTextOutput("summary_mod2")
+                                       )
+                                     )
+                                   )
+                          ),
+                          tabPanel(title = "Random Forest",
+                                   sidebarLayout(
+                                     sidebarPanel(
+                                       checkboxGroupInput(inputId = "vars_mod3",
+                                                          label = "Select the Predictor Variables",
+                                                          choices = names(Filter(is.numeric,df[,-1]))
+                                       ),
+                                       checkboxInput(inputId = "prepros3",
+                                                     label = "Standardize Data?",
+                                                     value = TRUE)
+                                     ),
+                                     mainPanel(
+                                       tabPanel(title = "Training Error Plot",
+                                                plotOutput("train_mod3")
+                                       ),
+                                       tabPanel(title = "Training Error Summary",
+                                                verbatimTextOutput("summary_mod3")
+                                       )
+                                     )
+                                   )
+                          )
+                        ),
+                        actionButton(inputId = "run_mods",
+                                     label = "Run Models")
                       )
                     )
-                    
-                    
                 ),
                  tabPanel("Prediction",plotOutput("table3")),
                )
