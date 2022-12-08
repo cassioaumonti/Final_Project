@@ -1,6 +1,9 @@
 
 library(shiny)
 library(shinythemes)
+library(tidyverse)
+
+df = iris
 
 navbarPage("Monti's App", theme = shinytheme("flatly"),
            tabPanel(title="About", icon = icon("house"),
@@ -32,19 +35,46 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                   tabPanel("Univariate Summary",
                       sidebarLayout(
                           sidebarPanel(
-                               # Inputs excluded for brevity
+                               selectInput(label="Select Plot Type",inputId = "plot_type",
+                                    choices = c("Empirical CDF"=1, "Histogram"=2,
+                                    "BoxPlot"=3), selected = 2),
+                               selectInput(label="Select Summary Type", inputId = "summ_type",
+                                           choices=c("Contingency Table"=1,
+                                                     "Continuous Summary"=2),selected = 2),
+                               varSelectInput(inputId = "var_uni_plot", 
+                                              "Select Response Variable (Continuous):", 
+                                              Filter(is.numeric,df)),
+                               varSelectInput(inputId = "aux_var_uni",
+                                              "Select Auxiliary Variable (Factor):",
+                                              Filter(is.factor,df))
                           ),
                           mainPanel(
                               tabsetPanel(
-                                 tabPanel("Plot", plotOutput("plot")), 
-                                 tabPanel("Summary", verbatimTextOutput("summary")), 
-                                 tabPanel("Table", tableOutput("table"))
+                                 tabPanel("Plot", plotOutput("plot_uni")), 
+                                 tabPanel("Summary Table", tableOutput("summary_uni"))
                                )
                              )
                            )
                   ),
                   tabPanel("Multivariate Summary",
-                      plotOutput("plot_summary")
+                      sidebarLayout(
+                        sidebarPanel(
+                          selectInput(label="Select Plot Type",inputId = "plot_type2",
+                                      choices = c("Scatter Plot"=1, "Biplot"=2,
+                                                  "BoxPlot"=3), selected = 1),
+                          varSelectInput(inputId = "var_multi_plot1",
+                                         "Select Response Variable:", Filter(is.numeric,df)),
+                          varSelectizeInput(inputId = "var_multi_plot2",
+                                            "Select Independent Variable:",
+                                            Filter(is.numeric,df)),
+                          varSelectInput(inputId = "aux_var_multi",
+                                         "Select Auxiliary Variable (Factor):",
+                                         Filter(is.factor,df))
+                        ),
+                        mainPanel(
+                          plotOutput("plot_multi")
+                        )
+                      )
                   )
               )
            ),
@@ -70,7 +100,31 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                         )
                       )
                  ),
-                 tabPanel("Model Fitting", plotOutput("table4")),
+                 tabPanel("Model Fitting", 
+                    navlistPanel(
+                      tabPanel("Data Splitting", 
+                          sidebarLayout(
+                            sidebarPanel(
+                              numericInput(inputId = "split",label = "Splitting Proportion",
+                                           value = 0.7, min = 0.1, max = 0.9)
+                            ),
+                            mainPanel(
+                              plotOutput("split_plot")
+                            )
+                          )
+                      ),
+                      tabPanel("Model Settings", 
+                        tabsetPanel(
+                          tabPanel(title = "Multiple Linear Regression"),
+                          tabPanel(title = "Regression Tree"),
+                          tabPanel(title = "Random Forest")
+                          
+                        )
+                      )
+                    )
+                    
+                    
+                ),
                  tabPanel("Prediction",plotOutput("table3")),
                )
            ),
