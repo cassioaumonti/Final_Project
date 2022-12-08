@@ -147,6 +147,9 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        checkboxInput(inputId = "prepros2",
                                                      label = "Standardize Data?",
                                                      value = TRUE),
+                                       numericInput(inputId = "tun1_mod2",
+                                                    label = "Tuning Parameter 1",
+                                                    value = 0.7, min = 0.1, max = 0.9)
                                      ),
                                      mainPanel(
                                        tabPanel(title = "Training Error Plot",
@@ -167,7 +170,13 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        ),
                                        checkboxInput(inputId = "prepros3",
                                                      label = "Standardize Data?",
-                                                     value = TRUE)
+                                                     value = TRUE),
+                                       numericInput(inputId = "tun1_mod3",
+                                                    label = "Max Value for Tuning Parameter",
+                                                    value = 0.7, min = 0, max = 100),
+                                       numericInput(inputId = "tun2_mod3",
+                                                    label = "Min Value for Tuning Parameter",
+                                                    value = -0.7, min = -100, max = 0)
                                      ),
                                      mainPanel(
                                        tabPanel(title = "Training Error Plot",
