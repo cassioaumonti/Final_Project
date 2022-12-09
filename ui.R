@@ -35,12 +35,12 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                   tabPanel("Univariate Summary",
                       sidebarLayout(
                           sidebarPanel(
+                            selectInput(label="Select Summary Type", inputId = "summ_type",
+                                        choices=c("Contingency Table"=1,
+                                                  "Continuous Summary"=2),selected = 2),
                                selectInput(label="Select Plot Type",inputId = "plot_type",
                                     choices = c("Empirical CDF"=1, "Histogram"=2,
-                                    "BoxPlot"=3), selected = 2),
-                               selectInput(label="Select Summary Type", inputId = "summ_type",
-                                           choices=c("Contingency Table"=1,
-                                                     "Continuous Summary"=2),selected = 2),
+                                    "BoxPlot"=3, "Scatter"=4), selected = 2),
                                varSelectInput(inputId = "var_uni_plot", 
                                               "Select Response Variable (Continuous):", 
                                               Filter(is.numeric,df)),
@@ -51,7 +51,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                           mainPanel(
                               tabsetPanel(
                                  tabPanel("Plot", plotOutput("plot_uni")), 
-                                 tabPanel("Summary Table", tableOutput("summary_uni"))
+                                 tabPanel("Summary Table", verbatimTextOutput("summary_uni"))
                                )
                              )
                            )
