@@ -204,10 +204,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                )
            ),
            tabPanel("Data",
-             tabsetPanel(
-               tabPanel("Filter", plotOutput("plot33")),
-               tabPanel("download",plotOutput("plot55"))
-             )
+               DT::dataTableOutput("dynamic_table")
            ),
            navbarMenu(title="More",
                       tabPanel("Data Science Blog", icon = icon("blog"),

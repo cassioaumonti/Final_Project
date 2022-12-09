@@ -1,6 +1,7 @@
 
 library(shiny)
 library(GGally)
+library(DT)
 
 df = iris
 
@@ -95,5 +96,13 @@ shinyServer(function(input, output) {
       }
       
     })
+    
+    output$dynamic_table <- DT::renderDataTable(df,
+      options = list(scrollx=TRUE,orderClasses=TRUE),
+      escape=FALSE,
+      rownames = FALSE,
+      selection = 'multiple'
+      
+    )
     
 })
