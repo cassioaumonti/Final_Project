@@ -2,14 +2,18 @@
 library(shiny)
 library(shinythemes)
 library(tidyverse)
+library(GGally)
 
 df = iris
+var_init = names(df)
 
 navbarPage("Monti's App", theme = shinytheme("flatly"),
            tabPanel(title="About", icon = icon("house"),
               fluidRow(
                   column(6,
                     h3("Welcome to Monti's App", style="margin-top:0px;"),
+                    br(),
+                    includeMarkdown("about.md")
                   ),
                   column(3,actionButton("btn_landing",
                                          label="Info: To know more about the data",
@@ -61,12 +65,14 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                         sidebarPanel(
                           selectInput(label="Select Plot Type",inputId = "plot_type2",
                                       choices = c("Scatter Plot"=1, "Biplot"=2,
-                                                  "BoxPlot"=3), selected = 1),
+                                                  "Combo Plot"=3), selected = 1),
                           varSelectInput(inputId = "var_multi_plot1",
-                                         "Select Response Variable:", Filter(is.numeric,df)),
+                                         "Select Response Variable:", Filter(is.numeric,df),
+                                         selected = var_init[1]),
                           varSelectizeInput(inputId = "var_multi_plot2",
                                             "Select Independent Variable:",
-                                            Filter(is.numeric,df)),
+                                            Filter(is.numeric,df),
+                                            selected = var_init[2]),
                           varSelectInput(inputId = "aux_var_multi",
                                          "Select Auxiliary Variable (Factor):",
                                          Filter(is.factor,df))
@@ -83,7 +89,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                   tabPanel("Modeling Info",
                       fluidRow(
                         column(6,
-                            includeMarkdown('about.md')
+                            includeMarkdown('model_info.md')
                         ),
                         column(3,
                           img(class="img-polaroid",

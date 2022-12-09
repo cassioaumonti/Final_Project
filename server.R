@@ -1,5 +1,6 @@
 
 library(shiny)
+library(GGally)
 
 df = iris
 
@@ -62,6 +63,34 @@ shinyServer(function(input, output) {
                     stdDev = sd(v), 
                     Min = min(v), 
                     Max = max(v))
+        
+      }
+      
+    })
+    
+    output$plot_multi <- renderPlot({
+      
+      if(input$plot_type2 == 1){
+        ggplot(df) + geom_point(aes(y = get(input$var_multi_plot1),
+                                    x = get(input$var_multi_plot2),
+                                    color = as.factor(get(input$aux_var_multi)))) +
+          labs(x = input$var_multi_plot2, y = input$var_multi_plot1) + 
+          scale_color_discrete(input$aux_var_multi)
+        
+      }else if(input$plot_type2 == 2){
+        
+        pcr = prcomp(Filter(is.numeric,df[,-1]), center = T, scale. = T)
+        pc_dir = as.data.frame(pcr$rotation)
+        pc_df = data.frame(pcr$x)
+        
+        ggplot(pc_dir)+
+          geom_point(data = pc_df, mapping = aes(x=PC1, y=PC2))+
+          geom_segment(aes(x = 0, y = 0, yend = 50 * PC2, xend = 50 * PC1))+
+          geom_label(mapping = aes(x = 51 * PC1, y = 51 * PC2, label = row.names(pc_dir)))
+        
+      }else{
+        
+        ggpairs(df)
         
       }
       
