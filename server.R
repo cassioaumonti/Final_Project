@@ -121,12 +121,57 @@ shinyServer(function(input, output) {
       
     })
     
-    btn_run <- eventReactive(input$run_mods,{
+    # multiple linear regression
+    btn_run1 <- eventReactive(input$run_mods,{
       
-      # multiple linear regression
-      
+      vars1=as.character(input$vars_mod1)
+      f = as.formula(paste0("Sepal.Length~",paste0(vars1, collapse = "+")))
+      lm(f, data =df)
       
     })
+    
+    output$train_mod1 <- renderPlot({
+      
+      mlr = btn_run1()
+      
+      ggplot(mlr, aes(x=.fitted, y=.resid)) + 
+        geom_point() + 
+        geom_hline(yintercept = 0)
+      
+    })
+    
+    output$summary_mod1 <- renderPrint({
+      
+      summary(btn_run1())
+      
+    })
+    
+    # regression tree
+    btn_run2 <- eventReactive(input$run_mods,{
+      
+      vars2=as.character(input$vars_mod2)
+      f = as.formula(paste0("Sepal.Length~",paste0(vars2, collapse = "+")))
+      rt = train(f, data =df,
+                 method = "rpart",
+                 tuneGrid = data.frame(cp = seq(0,1,0.1)),
+                 trControl = trainControl(method = "cv", number = 5))
+    })
+    
+    output$train_mod2 <- renderPlot({
+      
+      plot(btn_run2())
+      
+    })
+    
+    output$summary_mod2 <- renderPrint({
+      
+      rt = btn_run2()
+      
+      rt$results
+      
+    })
+    
+    output$btn <- 
     
     # data page:
     output$picker <- renderUI({

@@ -127,13 +127,14 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                           )
                       ),
                       tabPanel("Model Settings", 
+                        h2("Select the Predictors to Run the Models"),
                         tabsetPanel(
                           tabPanel(title = "Multiple Linear Regression",
                              sidebarLayout(
                                sidebarPanel(
                                  checkboxGroupInput(inputId = "vars_mod1",
                                      label = "Select the Predictor Variables",
-                                     choices = names(Filter(is.numeric,df[,-1]))
+                                     choices = names(df[,-1])
                                   )
                                ),
                                mainPanel(
@@ -174,7 +175,8 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        checkboxGroupInput(inputId = "vars_mod3",
                                                           label = "Select the Predictor Variables",
                                                           choices = names(Filter(is.numeric,df[,-1]))
-                                       )                                     ),
+                                       )
+                                   ),
                                      mainPanel(
                                        tabsetPanel(
                                          tabPanel(title = "Training Error Plot",
@@ -188,8 +190,14 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                    )
                           )
                         ),
-                        actionButton(inputId = "run_mods",
-                                     label = "Run Models")
+                        actionButton(inputId = "btn_check",
+                                     label = "Are you done selecting the predictors?"),
+                        conditionalPanel(
+                          condition = "input.btn_check == 'TRUE'",
+                          uiOutput("btn"),
+                          actionButton(inputId = "run_mods",
+                                       label = "Run Models")
+                        )
                       ),
                       tabPanel("Test Set Error Metrics",
                                tabsetPanel(
@@ -222,7 +230,6 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                         radioButtons("type_select", "What do you want to select?",
                                      c("Rows" = "Rows",
                                        "Columns" = "Columns")),
-                        
                         conditionalPanel(
                           condition = "input.type_select == 'Columns'",
                           uiOutput("picker"),
@@ -230,8 +237,6 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                         )
                         
                       ),
-                      
-                      # Show a plot of the generated distribution
                       mainPanel(
                         DT::dataTableOutput("table"),
                       )
