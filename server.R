@@ -1,6 +1,10 @@
 
 library(shiny)
+library(shinythemes)
+library(tidyverse)
 library(GGally)
+library(shinyWidgets)
+library(caret)
 library(DT)
 
 df = iris
@@ -97,12 +101,96 @@ shinyServer(function(input, output) {
       
     })
     
-    output$dynamic_table <- DT::renderDataTable(df,
-      options = list(scrollx=TRUE,orderClasses=TRUE),
-      escape=FALSE,
-      rownames = FALSE,
-      selection = 'multiple'
+    output$split_plot <- renderPlot({
       
-    )
+      splt = input$split
+      vr = as.character(input$var_resp)
+      
+      set.seed(555)
+      
+      trainIndex <- createDataPartition(df[,vr], p = splt, list = FALSE)
+      df2 = df
+      df2$id = 0
+      df2$id[trainIndex]=1
+      df2$id = as.factor(df2$id)
+      
+      ggplot(df2, aes(color = id)) + 
+        geom_point(aes(y = get(input$var_resp), x = 1:nrow(df2))) + 
+        scale_color_discrete(name="Split", labels= c("Test","Train"))+
+        labs(x = " ", y = input$var_resp)
+      
+    })
+    
+    btn_run <- eventReactive(input$run_mods,{
+      
+      # multiple linear regression
+      
+      
+    })
+    
+    # data page:
+    output$picker <- renderUI({
+      pickerInput(inputId = 'pick', 
+                  label = 'Choose', 
+                  choices = colnames(df),
+                  options = list(`actions-box` = TRUE),multiple = T)
+    })
+    
+    datasetInput <- eventReactive(input$view,{
+      
+      datasetInput <- df %>% 
+        select(input$pick)
+      
+      return(datasetInput)
+      
+    })
+    
+    output$table <- DT::renderDataTable(server = FALSE,{
+      if(input$type_select == "Rows"){
+        datatable(
+          df,
+          selection = "none",
+          filter="top", 
+          rownames = FALSE,
+          extensions = c("Buttons", "Select"),
+          
+          options = list(
+            select = TRUE,
+            dom = 'Blfrtip',
+            buttons =
+              list('copy', list(
+                extend = 'collection',
+                buttons = list(
+                  list(extend = 'csv', filename = "File", title = NULL,
+                       exportOptions = list(modifier = list(selected = TRUE))),
+                  list(extend = 'excel', filename = "File", title = NULL,
+                       exportOptions = list(modifier = list(selected = TRUE)))),
+                text = 'Download'
+              ))
+          ),
+          class = "display"
+        )
+      }else{
+        datatable(
+          datasetInput(),
+          filter="top", 
+          rownames = FALSE,
+          extensions = 'Buttons',
+          
+          options = list(
+            dom = 'Blfrtip',
+            buttons =
+              list('copy', 'print', list(
+                extend = 'collection',
+                buttons = list(
+                  list(extend = 'csv', filename = "File", title = NULL),
+                  list(extend = 'excel', filename = "File", title = NULL)),
+                text = 'Download'
+              ))
+          ),
+          class = "display"
+        )
+      }
+    })
     
 })

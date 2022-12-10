@@ -3,6 +3,9 @@ library(shiny)
 library(shinythemes)
 library(tidyverse)
 library(GGally)
+library(shinyWidgets)
+library(caret)
+library(DT)
 
 df = iris
 var_init = names(df)
@@ -112,7 +115,11 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                           sidebarLayout(
                             sidebarPanel(
                               numericInput(inputId = "split",label = "Splitting Proportion",
-                                           value = 0.7, min = 0.1, max = 0.9)
+                                           value = 0.7, min = 0.1, max = 0.9),
+                              varSelectInput(inputId = "var_resp",
+                                             label = "Select Response Variable",
+                                             data = Filter(is.numeric, df),
+                                             selected = var_init[1])
                             ),
                             mainPanel(
                               plotOutput("split_plot")
@@ -127,21 +134,19 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                  checkboxGroupInput(inputId = "vars_mod1",
                                      label = "Select the Predictor Variables",
                                      choices = names(Filter(is.numeric,df[,-1]))
-                                  ),
-                                 checkboxInput(inputId = "prepros1",
-                                               label = "Standardize Data?",
-                                               value = TRUE)
+                                  )
                                ),
                                mainPanel(
-                                 tabPanel(title = "Training Error Plot",
-                                    plotOutput("train_mod1")
-                                 ),
-                                 tabPanel(title = "Training Error Summary",
-                                    verbatimTextOutput("summary_mod1")
+                                 tabsetPanel(
+                                   tabPanel(title = "Training Error Plot",
+                                            plotOutput("train_mod1")
+                                   ),
+                                   tabPanel(title = "Training Error Summary",
+                                            verbatimTextOutput("summary_mod1")
+                                   )
                                  )
                                )
                              )
-                             
                           ),
                           tabPanel(title = "Regression Tree",
                                    sidebarLayout(
@@ -149,20 +154,16 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        checkboxGroupInput(inputId = "vars_mod2",
                                             label = "Select the Predictor Variables",
                                             choices = names(Filter(is.numeric,df[,-1]))
-                                       ),
-                                       checkboxInput(inputId = "prepros2",
-                                                     label = "Standardize Data?",
-                                                     value = TRUE),
-                                       numericInput(inputId = "tun1_mod2",
-                                                    label = "Tuning Parameter 1",
-                                                    value = 0.7, min = 0.1, max = 0.9)
+                                       )
                                      ),
                                      mainPanel(
-                                       tabPanel(title = "Training Error Plot",
-                                                plotOutput("train_mod2")
-                                       ),
-                                       tabPanel(title = "Training Error Summary",
-                                                verbatimTextOutput("summary_mod2")
+                                       tabsetPanel(
+                                         tabPanel(title = "Training Error Plot",
+                                                  plotOutput("train_mod2")
+                                         ),
+                                         tabPanel(title = "Training Error Summary",
+                                                  verbatimTextOutput("summary_mod2")
+                                         )
                                        )
                                      )
                                    )
@@ -173,23 +174,15 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        checkboxGroupInput(inputId = "vars_mod3",
                                                           label = "Select the Predictor Variables",
                                                           choices = names(Filter(is.numeric,df[,-1]))
-                                       ),
-                                       checkboxInput(inputId = "prepros3",
-                                                     label = "Standardize Data?",
-                                                     value = TRUE),
-                                       numericInput(inputId = "tun1_mod3",
-                                                    label = "Max Value for Tuning Parameter",
-                                                    value = 0.7, min = 0, max = 100),
-                                       numericInput(inputId = "tun2_mod3",
-                                                    label = "Min Value for Tuning Parameter",
-                                                    value = -0.7, min = -100, max = 0)
-                                     ),
+                                       )                                     ),
                                      mainPanel(
-                                       tabPanel(title = "Training Error Plot",
-                                                plotOutput("train_mod3")
-                                       ),
-                                       tabPanel(title = "Training Error Summary",
-                                                verbatimTextOutput("summary_mod3")
+                                       tabsetPanel(
+                                         tabPanel(title = "Training Error Plot",
+                                                  plotOutput("train_mod3")
+                                         ),
+                                         tabPanel(title = "Training Error Summary",
+                                                  verbatimTextOutput("summary_mod3")
+                                         )
                                        )
                                      )
                                    )
@@ -197,6 +190,26 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                         ),
                         actionButton(inputId = "run_mods",
                                      label = "Run Models")
+                      ),
+                      tabPanel("Test Set Error Metrics",
+                               tabsetPanel(
+                                 tabPanel("Multiple Linear Regression",
+                                      plotOutput("test_error_mlr_plot"),
+                                      verbatimTextOutput("test_error_mlr_summ")
+                                      
+                                 ),
+                                 tabPanel("Regression Tree",
+                                      plotOutput("test_error_rt_plot"),
+                                      verbatimTextOutput("test_error_rt_summ")
+                                 ),
+                                 tabPanel("Random Forest",
+                                      plotOutput("test_error_rf_plot"),
+                                      verbatimTextOutput("test_error_rf_summ")
+                                 )
+                               )
+                      ),
+                      tabPanel("Best Model",
+                          verbatimTextOutput("best_model_choice")
                       )
                     )
                 ),
@@ -204,7 +217,25 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                )
            ),
            tabPanel("Data",
-               DT::dataTableOutput("dynamic_table")
+                    sidebarLayout(
+                      sidebarPanel(
+                        radioButtons("type_select", "What do you want to select?",
+                                     c("Rows" = "Rows",
+                                       "Columns" = "Columns")),
+                        
+                        conditionalPanel(
+                          condition = "input.type_select == 'Columns'",
+                          uiOutput("picker"),
+                          actionButton("view", "View Selection")        
+                        )
+                        
+                      ),
+                      
+                      # Show a plot of the generated distribution
+                      mainPanel(
+                        DT::dataTableOutput("table"),
+                      )
+                    )
            ),
            navbarMenu(title="More",
                       tabPanel("Data Science Blog", icon = icon("blog"),
