@@ -124,72 +124,83 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                           )
                       ),
                       tabPanel("Model Settings",
-                        tabsetPanel(
-                          tabPanel(title = "Multiple Linear Regression",
-                             sidebarLayout(
-                               sidebarPanel(
-                                 checkboxGroupInput(inputId = "vars_mod1",
-                                     label = "Select the Predictor Variables",
-                                     choices = names(df[,-1])
-                                  )
-                               ),
-                               mainPanel(
-                                 tabsetPanel(
-                                   tabPanel(title = "Training Error Plot",
-                                            plotOutput("train_mod1")
-                                   ),
-                                   tabPanel(title = "Training Error Summary",
-                                            verbatimTextOutput("summary_mod1")
-                                   )
-                                 )
-                               )
-                             )
-                          ),
-                          tabPanel(title = "Regression Tree",
-                                   sidebarLayout(
-                                     sidebarPanel(
-                                       checkboxGroupInput(inputId = "vars_mod2",
-                                            label = "Select the Predictor Variables",
-                                            choices = names(df[,-1])
-                                       )
-                                     ),
-                                     mainPanel(
-                                       tabsetPanel(
-                                         tabPanel(title = "Training Error Plot",
-                                                  plotOutput("train_mod2")
-                                         ),
-                                         tabPanel(title = "Training Error Summary",
-                                                  verbatimTextOutput("summary_mod2")
+                        titlePanel("Select the Predictors for each model"),
+                        sidebarLayout(
+                          sidebarPanel(
+                              radioButtons(inputId = "rd_but",
+                                      label = "Have you chosen the desired predictors for all models?",
+                                      choices = c("Yes", "No"), selected = "No"),
+                              conditionalPanel(condition = "input.rd_but == 'Yes'",
+                                  actionButton(inputId = "run_mods",
+                                               label = "Run Models")
+                              )
+                            ),
+                            mainPanel(
+                              tabsetPanel(
+                                tabPanel(title = "Multiple Linear Regression",
+                                         sidebarLayout(
+                                           sidebarPanel(
+                                             checkboxGroupInput(inputId = "vars_mod1",
+                                                                label = "Select the Predictor Variables",
+                                                                choices = names(df[,-1])
+                                             )
+                                           ),
+                                           mainPanel(
+                                             tabsetPanel(
+                                               tabPanel(title = "Training Error Plot",
+                                                        plotOutput("train_mod1")
+                                               ),
+                                               tabPanel(title = "Training Error Summary",
+                                                        verbatimTextOutput("summary_mod1")
+                                               )
+                                             )
+                                           )
                                          )
-                                       )
-                                     )
-                                   )
-                          ),
-                          tabPanel(title = "Random Forest",
-                                   sidebarLayout(
-                                     sidebarPanel(
-                                       checkboxGroupInput(inputId = "vars_mod3",
-                                                          label = "Select the Predictor Variables",
-                                                          choices = names(df[,-1])
-                                       )
-                                   ),
-                                     mainPanel(
-                                       tabsetPanel(
-                                         tabPanel(title = "Training Error Plot",
-                                                  plotOutput("train_mod3")
-                                         ),
-                                         tabPanel(title = "Training Error Summary",
-                                                  verbatimTextOutput("summary_mod3")
+                                ),
+                                tabPanel(title = "Regression Tree",
+                                         sidebarLayout(
+                                           sidebarPanel(
+                                             checkboxGroupInput(inputId = "vars_mod2",
+                                                                label = "Select the Predictor Variables",
+                                                                choices = names(df[,-1])
+                                             )
+                                           ),
+                                           mainPanel(
+                                             tabsetPanel(
+                                               tabPanel(title = "Training Error Plot",
+                                                        plotOutput("train_mod2")
+                                               ),
+                                               tabPanel(title = "Training Error Summary",
+                                                        verbatimTextOutput("summary_mod2")
+                                               )
+                                             )
+                                           )
                                          )
-                                       )
-                                     )
-                                   )
+                                ),
+                                tabPanel(title = "Random Forest",
+                                         sidebarLayout(
+                                           sidebarPanel(
+                                             checkboxGroupInput(inputId = "vars_mod3",
+                                                                label = "Select the Predictor Variables",
+                                                                choices = names(df[,-1])
+                                             )
+                                           ),
+                                           mainPanel(
+                                             tabsetPanel(
+                                               tabPanel(title = "Training Error Plot",
+                                                        plotOutput("train_mod3")
+                                               ),
+                                               tabPanel(title = "Training Error Summary",
+                                                        verbatimTextOutput("summary_mod3")
+                                               )
+                                             )
+                                           )
+                                         )
+                                )
+                            )
                           )
-                        ),
-                        h2("After all desired predictors are selected, click on the button below to run all 3 models."),
-                        br(),
-                        actionButton(inputId = "run_mods",
-                                     label = "Run Models")
+                          
+                        )
                       ),
                       tabPanel("Test Set Error Metrics",
                                tabsetPanel(
@@ -206,12 +217,21 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                )
                       ),
                       tabPanel("Best Model",
-                          verbatimTextOutput("best_model_choice")
+                          verbatimTextOutput("best_model_choice"),
+                          radioButtons(inputId = "choose",
+                                       label = "Choose YOUR best model below",
+                                       choices = c("Multiple Linear Regression"=1,
+                                                   "Regression Tree"=2,
+                                                   "Random Forest"=3,
+                                                   "My Choice"=4),
+                                       selected = 4)
                       )
                     )
                 ),
                  tabPanel("Prediction",
-                    
+                    conditionalPanel(condition = "input.rd_but == 'Yes'",
+                         uiOutput("preds")
+                    )
                  ),
                )
            ),

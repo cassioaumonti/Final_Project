@@ -135,17 +135,21 @@ shinyServer(function(input, output, session) {
        dfTest <- df[-trainIndex, ]
         
         vars1=as.character(input$vars_mod1)
-        f = as.formula(paste0("Sepal.Length~",paste0(vars1, collapse = "+")))
-        mlr = lm(f, data = dfTrain)
+        f1 = as.formula(paste0("Sepal.Length~",paste0(vars1, collapse = "+")))
+        mlr = lm(f1, data = dfTrain)
         mlr_test = predict(mlr, newdata = dfTest)
         
-        rt = train(f, data = dfTrain,
+        vars2=as.character(input$vars_mod2)
+        f2 = as.formula(paste0("Sepal.Length~",paste0(vars2, collapse = "+")))
+        rt = train(f2, data = dfTrain,
                    method = "rpart",
                    tuneGrid = data.frame(cp = seq(0,1,0.1)),
                    trControl = trainControl(method = "cv", number = 5))
         rt_test = predict(rt, newdata = dfTest)
         
-        rf = train(f, data = dfTrain,
+        vars3=as.character(input$vars_mod3)
+        f3 = as.formula(paste0("Sepal.Length~",paste0(vars3, collapse = "+")))
+        rf = train(f3, data = dfTrain,
                    method = "rf",
                    tuneGrid = data.frame(mtry = 1:5),
                    trControl = trainControl(method = "cv", number = 5))
@@ -254,6 +258,27 @@ shinyServer(function(input, output, session) {
                       rf = errors()$rf)
       
       paste0("The best model by the RMSE is: ", bestMethod(tb))
+      
+    })
+    
+    output$pred <- renderUI({
+      
+      if(input$choose == 1){
+        
+        
+      }else if(input$choose == 2){
+        
+        
+      }else if(input$choose == 3){
+        
+        
+      }else{
+        
+        
+      }
+      
+      numericInput(inputId = "vars_pred",
+                   label = "")
       
     })
     
