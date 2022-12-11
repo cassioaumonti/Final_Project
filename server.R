@@ -10,7 +10,7 @@ library(DT)
 df = iris
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
     output$plot_uni <- renderPlot({
       
@@ -101,7 +101,7 @@ shinyServer(function(input, output) {
       
     })
     
-    output$split_plot <- renderPlot({
+    dat_split <- reactive({
       
       splt = input$split
       vr = as.character(input$var_resp)
@@ -109,6 +109,12 @@ shinyServer(function(input, output) {
       set.seed(555)
       
       trainIndex <- createDataPartition(df[,vr], p = splt, list = FALSE)
+      trainIndex
+    })
+    
+    output$split_plot <- renderPlot({
+      
+      trainIndex = dat_split()
       df2 = df
       df2$id = 0
       df2$id[trainIndex]=1
@@ -121,18 +127,33 @@ shinyServer(function(input, output) {
       
     })
     
-    # multiple linear regression
-    btn_run1 <- eventReactive(input$run_mods,{
-      
-      vars1=as.character(input$vars_mod1)
-      f = as.formula(paste0("Sepal.Length~",paste0(vars1, collapse = "+")))
-      lm(f, data =df)
-      
+    # multiple linear regression eventReactive
+    btn_run <- eventReactive(input$run_mods,{
+        
+       trainIndex = dat_split()
+       dfTrain <- df[trainIndex, ]
+       # dfTest <- df[-trainIndex, ]
+        
+        vars1=as.character(input$vars_mod1)
+        f = as.formula(paste0("Sepal.Length~",paste0(vars1, collapse = "+")))
+        mlr = lm(f, data = dfTrain)
+        
+        rt = train(f, data = dfTrain,
+                   method = "rpart",
+                   tuneGrid = data.frame(cp = seq(0,1,0.1)),
+                   trControl = trainControl(method = "cv", number = 5))
+        
+        rf = train(f, data = dfTrain,
+                   method = "rf",
+                   tuneGrid = data.frame(mtry = 1:5),
+                   trControl = trainControl(method = "cv", number = 5))
+        
+        list(mlr = mlr, rt = rt, rf = rf)
     })
     
     output$train_mod1 <- renderPlot({
       
-      mlr = btn_run1()
+      mlr = btn_run()$mlr
       
       ggplot(mlr, aes(x=.fitted, y=.resid)) + 
         geom_point() + 
@@ -142,36 +163,41 @@ shinyServer(function(input, output) {
     
     output$summary_mod1 <- renderPrint({
       
-      summary(btn_run1())
+      summary(btn_run()$mlr)
       
     })
     
     # regression tree
-    btn_run2 <- eventReactive(input$run_mods,{
-      
-      vars2=as.character(input$vars_mod2)
-      f = as.formula(paste0("Sepal.Length~",paste0(vars2, collapse = "+")))
-      rt = train(f, data =df,
-                 method = "rpart",
-                 tuneGrid = data.frame(cp = seq(0,1,0.1)),
-                 trControl = trainControl(method = "cv", number = 5))
-    })
-    
     output$train_mod2 <- renderPlot({
       
-      plot(btn_run2())
+      plot(btn_run()$rt)
       
     })
     
     output$summary_mod2 <- renderPrint({
       
-      rt = btn_run2()
+      rt = btn_run()$rt
       
       rt$results
       
     })
     
-    output$btn <- 
+    # random forest
+    output$train_mod3 <- renderPlot({
+      
+      gbmImp = varImp(btn_run()$rf)
+      plot(gbmImp)
+      
+    })
+    
+    output$summary_mod3 <- renderPrint({
+      
+      rf = btn_run()$rf
+      
+      rf$results
+      
+    })
+    
     
     # data page:
     output$picker <- renderUI({

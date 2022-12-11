@@ -122,12 +122,12 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                              selected = var_init[1])
                             ),
                             mainPanel(
+                              h2("Plot of Distribution of the Selected Split"),
                               plotOutput("split_plot")
                             )
                           )
                       ),
-                      tabPanel("Model Settings", 
-                        h2("Select the Predictors to Run the Models"),
+                      tabPanel("Model Settings",
                         tabsetPanel(
                           tabPanel(title = "Multiple Linear Regression",
                              sidebarLayout(
@@ -154,7 +154,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                      sidebarPanel(
                                        checkboxGroupInput(inputId = "vars_mod2",
                                             label = "Select the Predictor Variables",
-                                            choices = names(Filter(is.numeric,df[,-1]))
+                                            choices = names(df[,-1])
                                        )
                                      ),
                                      mainPanel(
@@ -174,7 +174,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                      sidebarPanel(
                                        checkboxGroupInput(inputId = "vars_mod3",
                                                           label = "Select the Predictor Variables",
-                                                          choices = names(Filter(is.numeric,df[,-1]))
+                                                          choices = names(df[,-1])
                                        )
                                    ),
                                      mainPanel(
@@ -188,15 +188,13 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        )
                                      )
                                    )
+                          ),
+                          tabPanel("Run All Models",
+                                   h2("After all desired predictors are selected, click on the button below to run all 3 models."),
+                                   br(),
+                                   actionButton(inputId = "run_mods",
+                                                label = "Run Models")
                           )
-                        ),
-                        actionButton(inputId = "btn_check",
-                                     label = "Are you done selecting the predictors?"),
-                        conditionalPanel(
-                          condition = "input.btn_check == 'TRUE'",
-                          uiOutput("btn"),
-                          actionButton(inputId = "run_mods",
-                                       label = "Run Models")
                         )
                       ),
                       tabPanel("Test Set Error Metrics",
