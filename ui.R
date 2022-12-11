@@ -115,14 +115,10 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                           sidebarLayout(
                             sidebarPanel(
                               numericInput(inputId = "split",label = "Splitting Proportion",
-                                           value = 0.7, min = 0.1, max = 0.9),
-                              varSelectInput(inputId = "var_resp",
-                                             label = "Select Response Variable",
-                                             data = Filter(is.numeric, df),
-                                             selected = var_init[1])
+                                           value = 0.7, min = 0.1, max = 0.9)
                             ),
                             mainPanel(
-                              h2("Plot of Distribution of the Selected Split"),
+                              h2("Distribution of the Selected Split for Sepal.Length"),
                               plotOutput("split_plot")
                             )
                           )
@@ -188,28 +184,23 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        )
                                      )
                                    )
-                          ),
-                          tabPanel("Run All Models",
-                                   h2("After all desired predictors are selected, click on the button below to run all 3 models."),
-                                   br(),
-                                   actionButton(inputId = "run_mods",
-                                                label = "Run Models")
                           )
-                        )
+                        ),
+                        h2("After all desired predictors are selected, click on the button below to run all 3 models."),
+                        br(),
+                        actionButton(inputId = "run_mods",
+                                     label = "Run Models")
                       ),
                       tabPanel("Test Set Error Metrics",
                                tabsetPanel(
                                  tabPanel("Multiple Linear Regression",
-                                      plotOutput("test_error_mlr_plot"),
                                       verbatimTextOutput("test_error_mlr_summ")
                                       
                                  ),
                                  tabPanel("Regression Tree",
-                                      plotOutput("test_error_rt_plot"),
                                       verbatimTextOutput("test_error_rt_summ")
                                  ),
                                  tabPanel("Random Forest",
-                                      plotOutput("test_error_rf_plot"),
                                       verbatimTextOutput("test_error_rf_summ")
                                  )
                                )
@@ -219,7 +210,9 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                       )
                     )
                 ),
-                 tabPanel("Prediction",plotOutput("table3")),
+                 tabPanel("Prediction",
+                    
+                 ),
                )
            ),
            tabPanel("Data",

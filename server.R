@@ -104,11 +104,11 @@ shinyServer(function(input, output, session) {
     dat_split <- reactive({
       
       splt = input$split
-      vr = as.character(input$var_resp)
+      # vr = as.character(input$var_resp)
       
       set.seed(555)
       
-      trainIndex <- createDataPartition(df[,vr], p = splt, list = FALSE)
+      trainIndex <- createDataPartition(df[,1], p = splt, list = FALSE)
       trainIndex
     })
     
@@ -121,9 +121,9 @@ shinyServer(function(input, output, session) {
       df2$id = as.factor(df2$id)
       
       ggplot(df2, aes(color = id)) + 
-        geom_point(aes(y = get(input$var_resp), x = 1:nrow(df2))) + 
+        geom_point(aes(y = Sepal.Length, x = 1:nrow(df2))) + 
         scale_color_discrete(name="Split", labels= c("Test","Train"))+
-        labs(x = " ", y = input$var_resp)
+        labs(x = " ", y = "Sepal.Length")
       
     })
     
@@ -132,23 +132,27 @@ shinyServer(function(input, output, session) {
         
        trainIndex = dat_split()
        dfTrain <- df[trainIndex, ]
-       # dfTest <- df[-trainIndex, ]
+       dfTest <- df[-trainIndex, ]
         
         vars1=as.character(input$vars_mod1)
         f = as.formula(paste0("Sepal.Length~",paste0(vars1, collapse = "+")))
         mlr = lm(f, data = dfTrain)
+        mlr_test = predict(mlr, newdata = dfTest)
         
         rt = train(f, data = dfTrain,
                    method = "rpart",
                    tuneGrid = data.frame(cp = seq(0,1,0.1)),
                    trControl = trainControl(method = "cv", number = 5))
+        rt_test = predict(rt, newdata = dfTest)
         
         rf = train(f, data = dfTrain,
                    method = "rf",
                    tuneGrid = data.frame(mtry = 1:5),
                    trControl = trainControl(method = "cv", number = 5))
+        rf_test = predict(rf, newdata = dfTest)
         
-        list(mlr = mlr, rt = rt, rf = rf)
+        list(mlr = mlr, rt = rt, rf = rf, mlr_test = mlr_test, 
+             rt_test = rt_test, rf_test = rf_test)
     })
     
     output$train_mod1 <- renderPlot({
@@ -198,6 +202,60 @@ shinyServer(function(input, output, session) {
       
     })
     
+    # test errors
+    errors <- reactive({
+      
+      trainIndex = dat_split()
+      dfTest <- df[-trainIndex, ]
+      
+      mlr = postResample(btn_run()$mlr_test, dfTest$Sepal.Length)
+      rt = postResample(btn_run()$rt_test, dfTest$Sepal.Length)
+      rf = postResample(btn_run()$rf_test, dfTest$Sepal.Length)
+      
+      list(mlr = mlr, rt = rt, rf= rf)
+      
+    })
+    
+    output$test_error_mlr_summ <- renderPrint({
+      
+      errors()$mlr
+      
+    })
+    
+    output$test_error_rt_summ <- renderPrint({
+      
+      errors()$rt
+      
+    })
+    
+    output$test_error_rf_summ <- renderPrint({
+      
+      errors()$rf
+      
+    })
+    
+    # best model
+    output$best_model_choice <- renderPrint({
+
+      bestMethod = function(x){
+        
+        bestm = which.min(lapply(1:length(x), function(i) x[[i]][1]))
+        
+        out = switch(bestm,
+                     "Multiple Linear Regression",
+                     "Regression Tree",
+                     "Random Forest")
+        
+        return(out)
+        
+      }
+      
+      tb = data.frame(mlr = errors()$mlr, rt = errors()$rt, 
+                      rf = errors()$rf)
+      
+      paste0("The best model by the RMSE is: ", bestMethod(tb))
+      
+    })
     
     # data page:
     output$picker <- renderUI({
