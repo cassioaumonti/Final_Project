@@ -1,5 +1,7 @@
 # Final Project by Cassio Monti
 
+This shiny app is a requirement from ST558 as final project.
+
 The purpose of this app is to provide a basic exploratory data analysis (EDA) and modeling using a multiple linear regression, regression tree, and random forest models. The app has guidance tabs that will lead the user from the general information about the app, data set, and models to the final predictions made on the best model chosen by the user dynamically.
 
 In order to run this app, the following packages are required:
