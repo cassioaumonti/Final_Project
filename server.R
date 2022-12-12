@@ -312,7 +312,7 @@ shinyServer(function(input, output) {
   })
     
     output$text <- renderUI({
-      h3("Your choice has been recorded!")
+      h3("Your choice has been recorded. You can go to the Prediction tab!")
     })
     
     # prediction:

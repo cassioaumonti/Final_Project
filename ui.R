@@ -255,6 +255,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                  tabPanel("Prediction",
                     sidebarLayout(
                       sidebarPanel(
+                        h3("Input values to make new predictions."),
                         useShinyjs(),
                         actionButton(inputId = "reset_preds",
                                      label = "Reset Predictor Variables"),
