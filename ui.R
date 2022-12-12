@@ -106,14 +106,23 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                           When the response variable follows the normal distibution, the Gauss-Markov Theorem says that the Least Squares Method is similar to the Maximum Likelihood Estimator (MLE), which is an important and reliable estimator since it considers the conditional ditributions of the data. Besides, MLE has some nice asymptotic properties."),
                                  helpText("The main drawback of linear regression is the assumptions one must make in order to use all the theory behind the method. The assumptions are:"),
                                  helpText("$$\\epsilon \\overset{iid}{\\sim} N(0,1)$$"),
-                                 helpText("In other words, the errors should be independent and identically distributed, following normal distribution with mean zero and variance 1. In real applications, this setting is not always the case, so more sofisticated models are necessary.")
+                                 helpText("In other words, the errors should be independent and identically distributed, following normal distribution with mean zero and variance \\(\\sigma^2\\)= 1. In real applications, this setting is not always the case, as well as linearity assumption embedded in this setting, so more sofisticated models are necessary.")
                                 )
                         ),
                         column(6,
                           h1("Tree Based Methods"),
                           h2("Regression Tree & Random Forest"),
                           box(width=12,
-                                 helpText("The controls for the app are located to the left and the visualizations are available on the right."),
+                              helpText("The next two models, Random Forest and Regression Tree, are both types of tree-based modeling methods. Generally speaking, in a tree-based modeling method, the predictor space is split into regions, with different predictions for each region. In the case of regression trees where the goal is to predict a continuous response, the mean of observations for a given region is typically used to make the predictions."),
+                              helpText("$$\\hat{Y_j}=\\frac{\\sum x_i}{n}$$"),
+                              helpText("Where \\(\\hat{Y_j}\\) is the prediction for the region j and \\(x_i\\) is the set of observartions from i = 1,..., \\(n_j\\)."),
+                              helpText("To make the predictions, the trees are split using recursive binary splitting. For every possible value of each predictor, find the residual sum of squares (RSS) and try to minimize it. The process is repeated with each split. Often, trees are grown very large and need to be cut back using cost complexity pruning. This ensures that the model is not overfit and will work well on predictions made on new data."),
+                              helpText("The big drawback of regression tree in relation to random forest and linear regression is that regression tree produces highly variable predictions due to lack of optimal algorithm to estimate the tree parameters. The random forest method overcomes this drawback by using average bootstrap predictions, which behaves similarly to the reduction of the variance in averaging the estimator. This idea can be seen below."),
+                              helpText("$$Var(\\hat{Y_i})=Var\\left(\\frac{\\sum x_i}{n}\\right)=\\frac{\\sum Var(x_i)}{n^2}=\\frac{\\sigma}{n}$$"),
+                              helpText("In a random forest model, we first begin by creating multiple regression trees from bootstrap samples. A random subset of predictors is used to create each bootstrap sample in order to prevent the trees from being correlated to each other. This random selection of the predictors is based on the nice feature present in the regression tree method which selects the best predictor variable in the first split. 
+                                       This characteristics sets up a feature selection framework present in the random forest and regression tree methods. One of the interesting advantages of these methods."),
+                              helpText("The major drawbacks of random forest is that it loses interpretation in relation to regression tree and linear regression due to its ensemble characteristic. This means that in order to improve the quality of predictions and reduce their variance, random forest averages the bootstrap trees. This feature comes with the cost of less interpretability."),
+                              helpText("The greatest desadvantage of regression tree and random forest in relation to the linear regression is that they can be computationally expensive, which can be overcome considering the powerful processors being produced nowadays.")
                                    
                           )
                         )
