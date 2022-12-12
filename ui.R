@@ -2,6 +2,7 @@
 library(shiny)
 library(shinythemes)
 library(tidyverse)
+library(shinyjs)
 library(GGally)
 library(shinyWidgets)
 library(caret)
@@ -142,7 +143,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                            sidebarPanel(
                                              checkboxGroupInput(inputId = "vars_mod1",
                                                                 label = "Select the Predictor Variables",
-                                                                choices = names(df[,-1])
+                                                                choices = names(df[,-c(1,5)])
                                              )
                                            ),
                                            mainPanel(
@@ -162,7 +163,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                            sidebarPanel(
                                              checkboxGroupInput(inputId = "vars_mod2",
                                                                 label = "Select the Predictor Variables",
-                                                                choices = names(df[,-1])
+                                                                choices = names(df[,-c(1,5)])
                                              )
                                            ),
                                            mainPanel(
@@ -182,7 +183,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                            sidebarPanel(
                                              checkboxGroupInput(inputId = "vars_mod3",
                                                                 label = "Select the Predictor Variables",
-                                                                choices = names(df[,-1])
+                                                                choices = names(df[,-c(1,5)])
                                              )
                                            ),
                                            mainPanel(
@@ -222,18 +223,47 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                                        label = "Choose YOUR best model below",
                                        choices = c("Multiple Linear Regression"=1,
                                                    "Regression Tree"=2,
-                                                   "Random Forest"=3,
-                                                   "My Choice"=4),
-                                       selected = 4)
+                                                   "Random Forest"=3),
+                                       selected = 4),
+                          actionButton(inputId = "sub_but",
+                                       label = "Submit Best Model's Choice"),
+                          useShinyjs(),
+                          conditionalPanel(condition = "input.sub_but==1",
+                                           uiOutput("text")
+                                           )
                       )
                     )
                 ),
                  tabPanel("Prediction",
-                    conditionalPanel(condition = "input.rd_but == 'Yes'",
-                         uiOutput("preds")
+                    sidebarLayout(
+                      sidebarPanel(
+                        useShinyjs(),
+                        actionButton(inputId = "reset_preds",
+                                     label = "Reset Predictor Variables"),
+                        numericInput(inputId = "Sepal.Width",
+                            label = "Sepal.Width",
+                            value = 0),
+                        numericInput(inputId = "Petal.Length",
+                            label = "Petal.Length",
+                            value = 0),
+                        numericInput(inputId = "Petal.Width",
+                            label = "Petal.Width",
+                            value = 0),
+                        # selectInput(inputId = "Species",
+                        #     label = "Species",
+                        #     choices = list("setosa"=1,"versicolor"=2,"virginica"=3),
+                        #     selected = 1),
+                        
+                        actionButton(inputId = "run_pred",
+                                   label = "Predict")
+                        ),
+                      mainPanel(
+                          h3("The predicted value is:"),
+                          verbatimTextOutput("text_pred")
+                        )
+                      )
                     )
-                 ),
-               )
+                 )
            ),
            tabPanel("Data",
                     sidebarLayout(
@@ -252,15 +282,16 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                         DT::dataTableOutput("table"),
                       )
                     )
-           ),
-           navbarMenu(title="More",
-                      tabPanel("Data Science Blog", icon = icon("blog"),
-                               verbatimTextOutput("Link")),
-                      tabPanel("GitHub Page", icon = icon("github"),
-                               verbatimTextOutput("test2")),
-                      tabPanel("Contact", icon = icon("envelope"),
-                               verbatimTextOutput("Contact"))
            )
+          # ,
+          #  navbarMenu(title="More",
+          #             tabPanel("Data Science Blog", icon = icon("blog"),
+          #                      verbatimTextOutput("Link")),
+          #             tabPanel("GitHub Page", icon = icon("github"),
+          #                      verbatimTextOutput("test2")),
+          #             tabPanel("Contact", icon = icon("envelope"),
+          #                      verbatimTextOutput("Contact"))
+          #  )
 )
 
 

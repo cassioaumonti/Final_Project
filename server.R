@@ -2,6 +2,7 @@
 library(shiny)
 library(shinythemes)
 library(tidyverse)
+library(shinyjs)
 library(GGally)
 library(shinyWidgets)
 library(caret)
@@ -10,7 +11,7 @@ library(DT)
 df = iris
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output, session) {
+shinyServer(function(input, output) {
 
     output$plot_uni <- renderPlot({
       
@@ -261,24 +262,99 @@ shinyServer(function(input, output, session) {
       
     })
     
-    output$pred <- renderUI({
+    observeEvent(input$reset_preds, {
+      show("Sepal.Width")
+      show("Petal.Length")
+      show("Petal.Width")
+      # show("Species")
+    })
+    
+    observeEvent(input$sub_but, {
+      
+      if(input$choose == 1){
+       
+        varnames = as.character(input$vars_mod1)
+
+      }else if(input$choose == 2){
+
+        varnames = as.character(input$vars_mod2)
+
+      }else{
+
+        varnames = as.character(input$vars_mod3)
+
+      }
+
+      out_vars = names(df[!(names(df) %in% varnames)])
+      
+      if("Sepal.Width" %in% out_vars){
+        hide("Sepal.Width")
+      }
+      
+      if("Petal.Length" %in% out_vars){
+        # toggle("Petal.Length")
+        hide("Petal.Length")
+      }
+      
+      
+      if("Petal.Width" %in% out_vars){
+        # toggle("Petal.Width")
+        hide("Petal.Width")
+      }
+      
+      
+      # if("Species" %in% out_vars){
+      #   # toggle("Species")
+      #   hide("Species")
+      #   }
+      
+  })
+    
+    output$text <- renderUI({
+      h3("Your choice has been recorded!")
+    })
+    
+    # prediction:
+    prediction <- reactive({
+      
+      dat_fr = data.frame(Sepal.Width = input$Sepal.Width,
+                          Petal.Length = input$Petal.Length,
+                          Petal.Width=input$Petal.Width)
       
       if(input$choose == 1){
         
+        varnames = as.character(input$vars_mod1)
+        mlr = btn_run()$mlr
+        pred = predict(mlr, newdata = dat_fr[varnames])
         
       }else if(input$choose == 2){
         
-        
-      }else if(input$choose == 3){
-        
-        
+        varnames = as.character(input$vars_mod2)
+        rt = btn_run()$rt
+        pred = predict(rt, newdata = dat_fr[varnames])
+
       }else{
+        
+        varnames = as.character(input$vars_mod3)
+        rf = btn_run()$rf
+        pred = predict(rf, newdata = dat_fr[varnames])
         
         
       }
       
-      numericInput(inputId = "vars_pred",
-                   label = "")
+      pred
+      
+    })
+    
+    btn_pred <- eventReactive(input$run_pred, {
+      
+      round(prediction(),4)
+      
+    })
+    
+    output$text_pred <- renderPrint({
+      
+      btn_pred()
       
     })
     
