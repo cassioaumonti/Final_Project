@@ -15,6 +15,6 @@ For this application, we will try to model *Sepal.Length* in function of the oth
 
 ## User Information
 
-This app contains 3 operational tabs: **Data Exploration**, **Modeling**, and **Data**. The **Data exploration** tab contains univariate and multivariate subtabs that allow the user to perform a more in-depth graphical and numerical analysis for the modeling step.    
+This app contains 3 operating tabs: **Data Exploration**, **Modeling**, and **Data**. The **Data exploration** tab contains univariate and multivariate subtabs that allow the user to perform a more in-depth graphical and numerical analysis for the modeling step.    
    The **Modeling** tab contains 3 subtabs, *Modeling Info* that will describe the models utilized in this app, *Model Fitting* tab which takes care of the data split, variable selection by the user for each model, testing errors, and choice of best model. Finally, the **Prediction** subtab will dynamically select the predictor variables chosen by the user as requisite of **Model Fitting** and the best model, also chosen by the user, for a prediction task in which the user has to input values for the pre-selected predictor variables according to the selected model as the best one among the 3 tested.    
    The last tab, **Data** regards to manipulation of the iris data set. The user can filter the data set and export this filter as an excel or csv file to their local machine easily by following the friendly looking interface provided.
