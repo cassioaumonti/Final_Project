@@ -91,27 +91,31 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                   tabPanel("Modeling Info",
                       withMathJax(),
                       fluidRow(
-                        
                         column(6,
                                h1("Multiple Linear Regression"),
                                box(width=12,
-                                 h4("The controls for the app are located to the left and the visualizations are available on the right."),
-                                 h4("To change the number of successes observed (for example the number of coins landing head side up), the slider on the top left can be used."),
-                                 h4("To change the prior distribution, the hyperparameters can be set using the input boxes on the left.  The changes in this distribution can be seen on the first graph."),
-                                 h4("The resulting changes to the posterior distribution can be seen on the second graph."),
-                                 p("\\(\\frac{\\Gamma(\\alpha+\\beta)}{\\Gamma(\\alpha)\\Gamma(\\beta)}\\theta^{\\alpha-1}(1-\\theta)^{\\beta-1}\\)")
+                                 helpText("Linear regression is a famous modeling technique which attempts to capture the average response of a particular dependent variable of interest via a straigh line. In the framework of a multiple linear regression, the expected response can be modeled as:"),
+                                 helpText("$$E(Y|X_1,\\cdots,X_p)=\\beta_0+\\beta_1X_1+\\cdots+\\beta_pX_p$$"),
+                                 helpText("Where X's are the predictor variables, Y is the response variable and \\(\\beta\\)'s are the parameters to be estimated from the data."),
+                                 helpText("The multiple linear regression model assumes the form below when the parameters are estimated using the Least Squares Method:"),
+                                 helpText("$$\\hat{Y}=\\hat{\\beta_0}+\\hat{\\beta_1}X_1+\\cdots+\\hat{\\beta_p}X_p$$"),
+                                 helpText("The general matricial form of the Least Squares Methods can be see below:"),
+                                 helpText("$$\\hat{\\beta}=(X^TX)^{-1}X^TY$$"),
+                                 helpText("Where \\(X^T\\) is the transposed design matrix of predictors, \\(X\\) is the design matrix of predictors, and \\(Y\\) is the response vector."),
+                                 helpText("The major benefit of linear regression is that the coefficients are of ease interpretation and it is relativelly simple to estimate them when the response follows the normal distribution, mainly because the coefficients present a closed form of estimation, as shown above.
+                                          When the response variable follows the normal distibution, the Gauss-Markov Theorem says that the Least Squares Method is similar to the Maximum Likelihood Estimator (MLE), which is an important and reliable estimator since it considers the conditional ditributions of the data. Besides, MLE has some nice asymptotic properties."),
+                                 helpText("The main drawback of linear regression is the assumptions one must make in order to use all the theory behind the method. The assumptions are:"),
+                                 helpText("$$\\epsilon \\overset{iid}{\\sim} N(0,1)$$"),
+                                 helpText("In other words, the errors should be independent and identically distributed, following normal distribution with mean zero and variance 1. In real applications, this setting is not always the case, so more sofisticated models are necessary.")
                                 )
                         ),
                         column(6,
-                               h1("Tree Based Methods"),
-                               h2("Regression Tree & Random Forest"),
-                               box(width=12,
-                                   h4("The controls for the app are located to the left and the visualizations are available on the right."),
-                                   h4("To change the number of successes observed (for example the number of coins landing head side up), the slider on the top left can be used."),
-                                   h4("To change the prior distribution, the hyperparameters can be set using the input boxes on the left.  The changes in this distribution can be seen on the first graph."),
-                                   h4("The resulting changes to the posterior distribution can be seen on the second graph."),
-                                   p("\\(\\frac{\\Gamma(\\alpha+\\beta)}{\\Gamma(\\alpha)\\Gamma(\\beta)}\\theta^{\\alpha-1}(1-\\theta)^{\\beta-1}\\)")
-                               )
+                          h1("Tree Based Methods"),
+                          h2("Regression Tree & Random Forest"),
+                          box(width=12,
+                                 helpText("The controls for the app are located to the left and the visualizations are available on the right."),
+                                   
+                          )
                         )
                       )
                  ),
