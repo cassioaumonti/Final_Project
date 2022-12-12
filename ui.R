@@ -20,20 +20,17 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                     includeMarkdown("about.md")
                   ),
                   column(3,actionButton("btn_landing",
-                                         label="Info: To know more about the data",
+                                         label="More information about the data",
                                          icon=icon('circle-question'),
-                                         class="down"),
+                                         class="down",
+                                        onclick= "window.open('https://archive-beta.ics.uci.edu/dataset/53/iris')"),
                          br(),
                          img(class="img-polaroid",
-                             src=paste0("http://upload.wikimedia.org/",
-                                        "wikipedia/commons/9/92/",
-                                        "1919_Ford_Model_T_Highboy_Coupe.jpg")),
+                             src="iris.jpg"),
                          tags$small(
-                           "Source: Photographed at the Bay State Antique ",
-                           "Automobile Club's July 10, 2005 show at the ",
-                           "Endicott Estate in Dedham, MA by ",
-                           a(href="http://commons.wikimedia.org/wiki/User:Sfoskett",
-                             "User:Sfoskett")
+                           "Source: Famous data set from Fisher, 1936.",
+                           a(href="https://archive.ics.uci.edu/ml/datasets/iris",
+                             "User:CassioMonti")
                         )
                   )
               )
@@ -93,7 +90,7 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
                   tabPanel("Modeling Info",
                       fluidRow(
                         column(6,
-                            includeMarkdown('model_info.md')
+                            includeMarkdown('about.md')
                         ),
                         column(3,
                           img(class="img-polaroid",
