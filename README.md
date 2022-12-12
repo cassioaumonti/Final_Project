@@ -1,6 +1,8 @@
 # Final_Project
 
-List of used packages:
+The purpose of this app is to provide a basic exploratory data analysis (EDA) and modeling using a multiple linear regression, regression tree, and random forest models. The app has guidance tabs that will lead the user from the general information about the app, data set, and models to the final predictions made on the best model chosen by the user dynamically.
+
+In order to run this app, the following packages are required:
 
 ```{r}
 
@@ -14,13 +16,14 @@ library(DT)
 
 ```
 
-Code to run the shiny app through GitHub
+RStudeo has a nice feature that allows the user to run the shiny app through GitHub via the following code:
 
 ```{r}
 shiny::runGitHub('Final_Project','cassioaumonti', ref="main")
 ```
 
-Run the code below and all required packages will be installed if they are not already in your local machine and the app will automatically be opened.
+The code below checks if the user has the required packages to run the app and install the ones that are not installed in their local machine. Lastly, the code run the previous code and calls the shiny app from GitHub. Pretty nice, isn't it?
+
 ```{r}
 
 list.of.packages <- c("shiny","shinythemes","tidyverse","GGally","shinyWidgets","caret","DT")
