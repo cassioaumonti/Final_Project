@@ -11,6 +11,8 @@ The data set used in this application was the famous data set created by the sta
    * **Petal.Width** - the width of the petal of iris flowers.
    * **Species** - the particular species of iris flowers, being setosa, versicolor, and virginica the sampled examples.
 
+For this application, we will try to model *Sepal.Length* in function of the other numerical variables. The categorical variable *Species* is not considered in the modeling step, but it is contemplated in the **Data Exploration** tab for filtering the categories.
+
 ## User Information
 
 This app contains 3 operational tabs: **Data Exploration**, **Modeling**, and **Data**. The **Data exploration** tab contains univariate and multivariate subtabs that allow the user to perform a more in-depth graphical and numerical analysis for the modeling step.    

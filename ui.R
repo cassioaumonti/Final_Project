@@ -1,6 +1,7 @@
 
 library(shiny)
 library(shinythemes)
+library(shinydashboard)
 library(tidyverse)
 library(shinyjs)
 library(GGally)
@@ -88,22 +89,29 @@ navbarPage("Monti's App", theme = shinytheme("flatly"),
            tabPanel("Modeling",
               navbarPage("Modeling Features",
                   tabPanel("Modeling Info",
+                      withMathJax(),
                       fluidRow(
+                        
                         column(6,
-                            includeMarkdown('about.md')
+                               h1("Multiple Linear Regression"),
+                               box(width=12,
+                                 h4("The controls for the app are located to the left and the visualizations are available on the right."),
+                                 h4("To change the number of successes observed (for example the number of coins landing head side up), the slider on the top left can be used."),
+                                 h4("To change the prior distribution, the hyperparameters can be set using the input boxes on the left.  The changes in this distribution can be seen on the first graph."),
+                                 h4("The resulting changes to the posterior distribution can be seen on the second graph."),
+                                 p("\\(\\frac{\\Gamma(\\alpha+\\beta)}{\\Gamma(\\alpha)\\Gamma(\\beta)}\\theta^{\\alpha-1}(1-\\theta)^{\\beta-1}\\)")
+                                )
                         ),
-                        column(3,
-                          img(class="img-polaroid",
-                            src=paste0("http://upload.wikimedia.org/",
-                                "wikipedia/commons/9/92/",
-                                "1919_Ford_Model_T_Highboy_Coupe.jpg")),
-                            tags$small(
-                                "Source: Photographed at the Bay State Antique ",
-                                "Automobile Club's July 10, 2005 show at the ",
-                                "Endicott Estate in Dedham, MA by ",
-                                a(href="http://commons.wikimedia.org/wiki/User:Sfoskett",
-                                "User:Sfoskett")
-                            )
+                        column(6,
+                               h1("Tree Based Methods"),
+                               h2("Regression Tree & Random Forest"),
+                               box(width=12,
+                                   h4("The controls for the app are located to the left and the visualizations are available on the right."),
+                                   h4("To change the number of successes observed (for example the number of coins landing head side up), the slider on the top left can be used."),
+                                   h4("To change the prior distribution, the hyperparameters can be set using the input boxes on the left.  The changes in this distribution can be seen on the first graph."),
+                                   h4("The resulting changes to the posterior distribution can be seen on the second graph."),
+                                   p("\\(\\frac{\\Gamma(\\alpha+\\beta)}{\\Gamma(\\alpha)\\Gamma(\\beta)}\\theta^{\\alpha-1}(1-\\theta)^{\\beta-1}\\)")
+                               )
                         )
                       )
                  ),
