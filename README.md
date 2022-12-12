@@ -10,6 +10,7 @@ In order to run this app, the following packages are required:
 
 library(shiny)
 library(shinythemes)
+library(shinydashboard)
 library(tidyverse)
 library(shinyjs)
 library(GGally)
@@ -29,7 +30,7 @@ The code below checks if the user has the required packages to run the app and i
 
 ```{r}
 
-list.of.packages <- c("shiny","shinythemes","tidyverse","GGally","shinyWidgets","caret","DT","shinyjs")
+list.of.packages <- c("shiny","shinythemes","tidyverse","GGally","shinyWidgets","caret","DT","shinyjs","shinydashboard")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
