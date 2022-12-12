@@ -25,7 +25,7 @@ RStudeo has a nice feature that allows the user to run the shiny app through Git
 shiny::runGitHub('Final_Project','cassioaumonti', ref="main")
 ```
 
-The code below checks if the user has the required packages to run the app and install the ones that are not installed in their local machine. Lastly, the code run the previous code and calls the shiny app from GitHub. Pretty nice, isn't it?
+The code below checks if the user has the required packages to run the app and install the ones that are not installed in their local machine. Lastly, the code run the previous chunk and calls the shiny app from GitHub. Pretty nice, isn't it?!
 
 ```{r}
 
